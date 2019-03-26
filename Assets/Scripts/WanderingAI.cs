@@ -7,9 +7,13 @@ public class WanderingAI : MonoBehaviour
     public float speed = 3.0f;
     public float obstacleRange = 1.0f;
 
+    public bool Alive { get; set; }
+
+    [SerializeField] GameObject fireballPrefab;
+    GameObject fireball;
     private bool alive;
 
-    public bool Alive { get; set; }
+    
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +37,20 @@ public class WanderingAI : MonoBehaviour
 
             if (Physics.SphereCast(ray, 0.75f, out var hit))
             {
-                if (hit.distance < obstacleRange)
+                var hitObject = hit.transform.gameObject;
+
+                if (hitObject.GetComponent<PlayerCharacter>())
+                {
+                    if (fireball == null)
+                    {
+                        fireball = Instantiate(fireballPrefab) as GameObject;
+                        fireball.transform.position = transform.TransformPoint(Vector3.forward * 1.5f);
+                        fireball.transform.rotation = transform.rotation;
+
+                    }
+                }
+
+                else if (hit.distance < obstacleRange)
                 {
                     var angle = Random.Range(-110, 110);
                     transform.Rotate(0, angle, 0);
